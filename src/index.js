@@ -1,5 +1,5 @@
 import './css/styles.css';
-import debounce from 'lodash/debounce';
+import debounce from 'lodash.debounce';
 import { fetchCountries } from './fetchCountries';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
@@ -13,9 +13,11 @@ searchEl.addEventListener('input', debounce(handleInput, DEBOUNCE_DELAY));
 function handleInput (event) {
     event.preventDefault();
     const inputValue = event.target.value.trim().toLowerCase();
-     if (inputValue==="") {
-        countryInfo = "";
-        countryList = "";
+
+     if (inputValue === '') {
+        countryInfo = '';
+        countryList = '';
+        return;
      }
      fetchCountries(`${inputValue}`)
         .then(renderMarkup)
@@ -31,21 +33,23 @@ function renderMarkup(serverDataList) {
        return;
    }
 
-   if (serverDataList.length === 1) {
+    else if (serverDataList.length === 1) {
        countryInfo.innerHTML = countryInfoMarkup(serverDataList[0]);
        countryList.innerHTML = '';
        return;
    }
-
+   
+   else {
    countryInfo.innerHTML = '';
    countryList.innerHTML = countryListMarkup(serverDataList);
 }
+};
 
 function onFetchError(error) {
     countryList.innerHTML = '';
     countryInfo.innerHTML = '';
     Notify.failure('Oops, there is no country with that name.');
-  }
+  };
 
   function countryListMarkup(serverDataList) {
    return serverDataList
@@ -69,4 +73,3 @@ function countryInfoMarkup({ name, flags, capital, population, languages }) {
    <p><b>Population:</b> ${population}</p>
    <p><b>Languages:</b> ${countryLanguages}</p>`;
 };
-
