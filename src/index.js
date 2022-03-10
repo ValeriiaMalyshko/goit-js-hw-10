@@ -23,8 +23,50 @@ function handleInput (event) {
         .finally(() => form.reset());
 };
 
+function renderMarkup(serverDataList) {
+   if (serverDataList.length > 10) {
+       countryList.innerHTML = '';
+       countryInfo.innerHTML = '';
+       Notify.info('Too many matches found. Please enter a more specific name.');
+       return;
+   }
+
+   if (serverDataList.length === 1) {
+       countryInfo.innerHTML = countryInfoMarkup(serverDataList[0]);
+       countryList.innerHTML = '';
+       return;
+   }
+
+   countryInfo.innerHTML = '';
+   countryList.innerHTML = countryListMarkup(serverDataList);
+}
+
 function onFetchError(error) {
-    countryListRef.innerHTML = '';
-    countryInfoRef.innerHTML = '';
+    countryList.innerHTML = '';
+    countryInfo.innerHTML = '';
     Notify.failure('Oops, there is no country with that name.');
   }
+
+  function countryListMarkup(serverDataList) {
+   return serverDataList
+       .map(({ flags, name }) => {
+           return `<li>
+           <img src="${flags.svg}" alt="Flag of ${name.official}">
+           <p><b>${name.official}</b></p>
+           </li>`;
+       })
+       .join('');
+};
+
+function countryInfoMarkup({ name, flags, capital, population, languages }) {
+   const countryLanguages = Object.values(languages).join(', ');
+
+   return `<div>
+   <img src="${flags.svg}" alt="Flag of ${name.official}.">
+   <h1>${name.official}</h1>
+   </div>
+   <p><b>Capital:</b> ${capital}</p>
+   <p><b>Population:</b> ${population}</p>
+   <p><b>Languages:</b> ${countryLanguages}</p>`;
+};
+
